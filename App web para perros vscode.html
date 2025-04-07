@@ -1,0 +1,175 @@
+// Community.jsx
+import { useState, useEffect } from 'react';
+import axios from 'axios';
+
+const Community = () => {
+  const [posts, setPosts] = useState([]);
+  const [newPost, setNewPost] = useState('');
+
+  useEffect(() => {
+    axios.get('/api/community').then(res => setPosts(res.data));
+  }, []);
+
+  const handlePost = async () => {
+    const res = await axios.post('/api/community', { contenido: newPost });
+    setPosts([res.data, ...posts]);
+    setNewPost('');
+  };
+
+  return (
+    <div className="p-4">
+      <h2 className="text-xl font-bold mb-4">Comunidad</h2>
+      <textarea
+        className="w-full p-2 border rounded mb-2"
+        value={newPost}
+        onChange={(e) => setNewPost(e.target.value)}
+        placeholder="Comparte algo sobre tu perro..."
+      />
+      <button onClick={handlePost} className="bg-blue-600 text-white px-4 py-2 rounded mb-4">Publicar</button>
+      <ul className="space-y-4">
+        {posts.map((post) => (
+          <li key={post._id} className="p-4 border rounded shadow">
+            <p><strong>{post.usuario.nombre}:</strong> {post.contenido}</p>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+};
+
+export default Community;
+
+
+// ReminderAgenda.jsx
+import { useState, useEffect } from 'react';
+import axios from 'axios';
+
+const ReminderAgenda = () => {
+  const [reminders, setReminders] = useState([]);
+  const [newReminder, setNewReminder] = useState({ titulo: '', fecha: '' });
+
+  useEffect(() => {
+    axios.get('/api/reminders').then(res => setReminders(res.data));
+  }, []);
+
+  const handleAdd = async () => {
+    const res = await axios.post('/api/reminders', newReminder);
+    setReminders([...reminders, res.data]);
+    setNewReminder({ titulo: '', fecha: '' });
+  };
+
+  return (
+    <div className="p-4">
+      <h2 className="text-xl font-bold mb-4">Agenda de Recordatorios</h2>
+      <input
+        type="text"
+        placeholder="Título"
+        value={newReminder.titulo}
+        onChange={(e) => setNewReminder({ ...newReminder, titulo: e.target.value })}
+        className="w-full p-2 border rounded mb-2"
+      />
+      <input
+        type="date"
+        value={newReminder.fecha}
+        onChange={(e) => setNewReminder({ ...newReminder, fecha: e.target.value })}
+        className="w-full p-2 border rounded mb-2"
+      />
+      <button onClick={handleAdd} className="bg-green-600 text-white px-4 py-2 rounded mb-4">Agregar Recordatorio</button>
+      <ul className="space-y-2">
+        {reminders.map(rem => (
+          <li key={rem._id} className="p-4 border rounded shadow">
+            <p><strong>{rem.titulo}</strong> - {new Date(rem.fecha).toLocaleDateString()}</p>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+};
+
+export default ReminderAgenda;
+
+
+// AdminPanel.jsx
+import { useEffect, useState } from 'react';
+import axios from 'axios';
+
+const AdminPanel = () => {
+  const [users, setUsers] = useState([]);
+
+  useEffect(() => {
+    axios.get('/api/admin/users').then(res => setUsers(res.data));
+  }, []);
+
+  return (
+    <div className="p-4">
+      <h2 className="text-xl font-bold mb-4">Panel de Administración</h2>
+      <ul className="space-y-4">
+        {users.map(user => (
+          <li key={user._id} className="p-4 border rounded">
+            <p><strong>{user.nombre}</strong> - {user.email}</p>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+};
+
+export default AdminPanel;
+
+
+// EducationContent.jsx
+import { useEffect, useState } from 'react';
+import axios from 'axios';
+
+const EducationContent = () => {
+  const [articles, setArticles] = useState([]);
+
+  useEffect(() => {
+    axios.get('/api/educacion').then(res => setArticles(res.data));
+  }, []);
+
+  return (
+    <div className="p-4">
+      <h2 className="text-xl font-bold mb-4">Contenido Educativo</h2>
+      <ul className="space-y-4">
+        {articles.map(article => (
+          <li key={article._id} className="border p-4 rounded">
+            <h3 className="text-lg font-semibold">{article.titulo}</h3>
+            <p>{article.descripcion}</p>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+};
+
+export default EducationContent;
+
+
+// Gamification.jsx
+import { useEffect, useState } from 'react';
+import axios from 'axios';
+
+const Gamification = () => {
+  const [stats, setStats] = useState({ puntos: 0, logros: [] });
+
+  useEffect(() => {
+    axios.get('/api/gamification').then(res => setStats(res.data));
+  }, []);
+
+  return (
+    <div className="p-4">
+      <h2 className="text-xl font-bold mb-4">Gamificación</h2>
+      <p className="mb-2">Puntos: {stats.puntos}</p>
+      <ul className="space-y-2">
+        {stats.logros.map((logro, idx) => (
+          <li key={idx} className="p-2 bg-gray-100 rounded">
+            🏅 {logro}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+};
+
+export default Gamification;
